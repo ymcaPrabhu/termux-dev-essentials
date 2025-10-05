@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termux Dev Tools - Essential Development Toolkit</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🛠️ Termux Dev Tools</h1>
+            <p class="tagline">Essential npm packages for Termux development with Claude and GitHub integration</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>📱 SMS Management</h3>
+                    <p>Multi-provider SMS integration supporting Twilio and Vonage with unified API</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 Development Tools</h3>
+                    <p>Pre-configured setup with ESLint, Prettier, Jest, and TypeScript support</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 Claude Integration</h3>
+                    <p>Optimized for Claude Code with comprehensive documentation and examples</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 GitHub Sync</h3>
+                    <p>Interactive GitHub repository setup and automated synchronization</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="installation">
+            <h2>Installation</h2>
+            <pre><code># Clone the repository
+git clone https://github.com/yourusername/termux-dev-essentials.git
+
+# Navigate to directory
+cd termux-dev-essentials
+
+# Install dependencies
+npm install
+
+# Run setup
+npm run setup</code></pre>
+        </section>
+
+        <section class="usage">
+            <h2>Quick Start</h2>
+            <h3>SMS Manager Example</h3>
+            <pre><code>const AndroidMessageManager = require('./src/sms-manager');
+
+// Initialize with Twilio
+const sms = new AndroidMessageManager('twilio');
+sms.initTwilio('ACCOUNT_SID', 'AUTH_TOKEN');
+
+// Send SMS
+await sms.sendMessage('+1234567890', 'Hello from Termux!');
+
+// Initialize with Vonage
+const sms2 = new AndroidMessageManager('vonage');
+sms2.initVonage('API_KEY', 'API_SECRET');
+await sms2.sendMessage('+1234567890', 'Hello from Vonage!');</code></pre>
+        </section>
+
+        <section class="commands">
+            <h2>Available Commands</h2>
+            <div class="commands-list">
+                <div class="command">
+                    <code>npm run setup</code>
+                    <p>Setup development environment</p>
+                </div>
+                <div class="command">
+                    <code>npm run sync</code>
+                    <p>Git commit and push changes</p>
+                </div>
+                <div class="command">
+                    <code>npm run update-all</code>
+                    <p>Update packages and fix vulnerabilities</p>
+                </div>
+                <div class="command">
+                    <code>npm run codespace</code>
+                    <p>Connect to GitHub Codespaces</p>
+                </div>
+                <div class="command">
+                    <code>npm run clean</code>
+                    <p>Purge cache and temporary files</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="dependencies">
+            <h2>Core Dependencies</h2>
+            <div class="deps-grid">
+                <span class="dep">@vonage/server-sdk</span>
+                <span class="dep">twilio</span>
+                <span class="dep">express</span>
+                <span class="dep">axios</span>
+                <span class="dep">github</span>
+                <span class="dep">commander</span>
+                <span class="dep">chalk</span>
+                <span class="dep">inquirer</span>
+                <span class="dep">lodash</span>
+                <span class="dep">moment</span>
+                <span class="dep">dotenv</span>
+                <span class="dep">cors</span>
+            </div>
+        </section>
+
+        <section class="environment">
+            <h2>Environment Setup</h2>
+            <p>Create a <code>.env</code> file with the following variables:</p>
+            <pre><code># SMS Provider Credentials
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+VONAGE_API_KEY=your_vonage_api_key
+VONAGE_API_SECRET=your_vonage_api_secret
+
+# GitHub Integration
+GITHUB_TOKEN=your_github_token
+
+# Development Settings
+NODE_ENV=development
+PORT=3000</code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Termux Dev Tools | MIT License</p>
+            <p>Built for Termux with ❤️</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

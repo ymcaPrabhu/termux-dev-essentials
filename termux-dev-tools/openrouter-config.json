@@ -1,0 +1,6 @@
+{
+  "apiKey": "YOUR_OPENROUTER_API_KEY",
+  "model": "YOUR_MODEL_NAME",
+  "temperature": 0.7,
+  "max_tokens": 1024
+}
