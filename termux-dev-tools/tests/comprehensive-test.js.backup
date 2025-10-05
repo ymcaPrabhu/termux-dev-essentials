@@ -1,0 +1,317 @@
+#!/usr/bin/env node
+
+/**
+ * Comprehensive Test Suite for termux-dev-tools
+ * Tests all components and logs issues to Sentry
+ */
+
+const { Sentry, initSentry, captureMessage, captureError, addBreadcrumb } = require('../src/sentry-config');
+const fs = require('fs');
+const path = require('path');
+
+// Initialize Sentry
+initSentry();
+
+// Main test function
+async function runAllTests() {
+  console.log('🧪 Starting Comprehensive Test Suite for termux-dev-tools\n');
+  console.log('=' .repeat(60));
+
+  const results = {
+    passed: [],
+    failed: [],
+    warnings: []
+  };
+
+  // Helper function to run a test
+  async function runTest(testName, testFn) {
+  console.log(`\n🔍 Testing: ${testName}`);
+  addBreadcrumb(`Testing: ${testName}`);
+
+  try {
+    await testFn();
+    console.log(`   ✅ PASSED: ${testName}`);
+    results.passed.push(testName);
+  } catch (error) {
+    console.log(`   ❌ FAILED: ${testName}`);
+    console.log(`   Error: ${error.message}`);
+    results.failed.push({ test: testName, error: error.message });
+
+    // Log to Sentry
+    captureError(error, {
+      test: testName,
+      component: 'comprehensive-test',
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+  // Helper function to log warning
+  function logWarning(testName, message) {
+    console.log(`   ⚠️  WARNING: ${message}`);
+    results.warnings.push({ test: testName, message });
+    captureMessage(`Warning in ${testName}: ${message}`, 'warning');
+  }
+
+  // Test 1: Check project structure
+  await runTest('Project Structure', async () => {
+  const requiredDirs = ['src', 'scripts', 'examples', 'docs', 'tests', 'config'];
+  const requiredFiles = ['package.json', '.env', '.gitignore'];
+
+  for (const dir of requiredDirs) {
+    const dirPath = path.join(process.cwd(), dir);
+    if (!fs.existsSync(dirPath)) {
+      throw new Error(`Missing required directory: ${dir}`);
+    }
+  }
+
+  for (const file of requiredFiles) {
+    const filePath = path.join(process.cwd(), file);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Missing required file: ${file}`);
+    }
+  }
+});
+
+// Test 2: Check package.json validity
+await runTest('Package.json Configuration', async () => {
+  const packageJson = require('../package.json');
+
+  if (!packageJson.name) throw new Error('Missing package name');
+  if (!packageJson.version) throw new Error('Missing version');
+  if (!packageJson.dependencies) throw new Error('Missing dependencies');
+
+  // Check critical dependencies
+  const criticalDeps = ['express', 'dotenv', '@sentry/node'];
+  for (const dep of criticalDeps) {
+    if (!packageJson.dependencies[dep]) {
+      throw new Error(`Missing critical dependency: ${dep}`);
+    }
+  }
+});
+
+// Test 3: Check environment variables
+await runTest('Environment Variables', async () => {
+  require('dotenv').config();
+
+  const requiredEnvVars = ['SENTRY_DSN', 'NODE_ENV'];
+  const missingVars = [];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      missingVars.push(envVar);
+    }
+  }
+
+  if (missingVars.length > 0) {
+    throw new Error(`Missing environment variables: ${missingVars.join(', ')}`);
+  }
+
+  // Check optional but recommended vars
+  const optionalVars = ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'VONAGE_API_KEY'];
+  for (const envVar of optionalVars) {
+    if (!process.env[envVar] || process.env[envVar].startsWith('your_')) {
+      logWarning('Environment Variables', `${envVar} not configured (optional)`);
+    }
+  }
+});
+
+// Test 4: Test Sentry configuration
+await runTest('Sentry Configuration', async () => {
+  const sentryConfig = require('../src/sentry-config');
+
+  if (!sentryConfig.initSentry) throw new Error('Missing initSentry function');
+  if (!sentryConfig.captureError) throw new Error('Missing captureError function');
+  if (!sentryConfig.captureMessage) throw new Error('Missing captureMessage function');
+  if (!sentryConfig.addBreadcrumb) throw new Error('Missing addBreadcrumb function');
+
+  // Test that Sentry is actually initialized
+  if (!process.env.SENTRY_DSN) {
+    throw new Error('SENTRY_DSN not configured');
+  }
+});
+
+// Test 5: Test SMS Manager module
+await runTest('SMS Manager Module', async () => {
+  const AndroidMessageManager = require('../src/sms-manager');
+
+  if (typeof AndroidMessageManager !== 'function') {
+    throw new Error('AndroidMessageManager is not a constructor');
+  }
+
+  // Test instantiation
+  const smsManager = new AndroidMessageManager('twilio');
+
+  if (!smsManager.sendSMS) throw new Error('Missing sendSMS method');
+  if (!smsManager.initTwilio) throw new Error('Missing initTwilio method');
+  if (!smsManager.initVonage) throw new Error('Missing initVonage method');
+
+  logWarning('SMS Manager', 'SMS sending not tested (requires valid credentials)');
+});
+
+// Test 6: Check scripts existence and syntax
+await runTest('Scripts Directory', async () => {
+  const scriptsDir = path.join(process.cwd(), 'scripts');
+  const scripts = fs.readdirSync(scriptsDir);
+
+  if (scripts.length === 0) {
+    throw new Error('No scripts found in scripts directory');
+  }
+
+  console.log(`   Found ${scripts.length} script(s): ${scripts.join(', ')}`);
+
+  // Check if scripts are readable
+  for (const script of scripts) {
+    const scriptPath = path.join(scriptsDir, script);
+    const content = fs.readFileSync(scriptPath, 'utf8');
+
+    if (content.length === 0) {
+      throw new Error(`Script ${script} is empty`);
+    }
+  }
+});
+
+// Test 7: Check example files
+await runTest('Example Files', async () => {
+  const examplesDir = path.join(process.cwd(), 'examples');
+  const examples = fs.readdirSync(examplesDir);
+
+  const requiredExamples = ['sentry-express-example.js', 'sentry-test.js'];
+
+  for (const example of requiredExamples) {
+    if (!examples.includes(example)) {
+      throw new Error(`Missing required example: ${example}`);
+    }
+  }
+});
+
+// Test 8: Test documentation
+await runTest('Documentation', async () => {
+  const docsDir = path.join(process.cwd(), 'docs');
+  const docs = fs.readdirSync(docsDir);
+
+  if (docs.length === 0) {
+    throw new Error('No documentation files found');
+  }
+
+  console.log(`   Found ${docs.length} documentation file(s)`);
+});
+
+// Test 9: Check npm scripts
+await runTest('NPM Scripts', async () => {
+  const packageJson = require('../package.json');
+  const scripts = packageJson.scripts;
+
+  const requiredScripts = ['start', 'dev'];
+
+  for (const script of requiredScripts) {
+    if (!scripts[script]) {
+      throw new Error(`Missing required npm script: ${script}`);
+    }
+  }
+});
+
+// Test 10: Check file permissions
+await runTest('File Permissions', async () => {
+  const executableFiles = [
+    'examples/sentry-express-example.js',
+    'examples/sentry-test.js'
+  ];
+
+  for (const file of executableFiles) {
+    const filePath = path.join(process.cwd(), file);
+    if (fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      // Check if file has execute permission (Unix-like systems)
+      if (process.platform !== 'win32') {
+        const hasExecutePerm = (stats.mode & 0o111) !== 0;
+        if (!hasExecutePerm) {
+          logWarning('File Permissions', `${file} may not have execute permission`);
+        }
+      }
+    }
+  }
+});
+
+// Test 11: Test dependency installation
+await runTest('Dependencies Installation', async () => {
+  const nodeModules = path.join(process.cwd(), 'node_modules');
+
+  if (!fs.existsSync(nodeModules)) {
+    throw new Error('node_modules directory not found - run npm install');
+  }
+
+  const packageJson = require('../package.json');
+  const dependencies = Object.keys(packageJson.dependencies);
+
+  const missingDeps = [];
+  for (const dep of dependencies) {
+    const depPath = path.join(nodeModules, dep);
+    if (!fs.existsSync(depPath)) {
+      missingDeps.push(dep);
+    }
+  }
+
+  if (missingDeps.length > 0) {
+    throw new Error(`Missing dependencies: ${missingDeps.join(', ')}`);
+  }
+
+  console.log(`   ✓ All ${dependencies.length} dependencies installed`);
+});
+
+// Test 12: Simulate intentional error for testing
+await runTest('Sentry Error Capture Test', async () => {
+  // This test intentionally throws an error to verify Sentry capture
+  try {
+    throw new Error('Intentional test error for Sentry verification');
+  } catch (error) {
+    captureError(error, {
+      test: 'Sentry Error Capture Test',
+      intentional: true,
+      purpose: 'Verify Sentry integration'
+    });
+    // Re-throw to mark test as failed
+    throw error;
+  }
+});
+
+// Wait for Sentry to send events
+console.log('\n⏳ Waiting for Sentry events to be sent...');
+await new Promise(resolve => setTimeout(resolve, 3000));
+
+// Print summary
+console.log('\n' + '='.repeat(60));
+console.log('\n📊 TEST SUMMARY\n');
+console.log(`✅ Passed: ${results.passed.length}`);
+console.log(`❌ Failed: ${results.failed.length}`);
+console.log(`⚠️  Warnings: ${results.warnings.length}`);
+
+if (results.failed.length > 0) {
+  console.log('\n❌ FAILED TESTS:');
+  results.failed.forEach((fail, idx) => {
+    console.log(`   ${idx + 1}. ${fail.test}`);
+    console.log(`      Error: ${fail.error}`);
+  });
+}
+
+if (results.warnings.length > 0) {
+  console.log('\n⚠️  WARNINGS:');
+  results.warnings.forEach((warn, idx) => {
+    console.log(`   ${idx + 1}. ${warn.test}: ${warn.message}`);
+  });
+}
+
+console.log('\n📊 View all logged issues in Sentry:');
+console.log('   https://amit-pb.sentry.io/projects/termux-dev-tools/\n');
+
+  // Send final summary to Sentry
+  captureMessage(`Test suite completed: ${results.passed.length} passed, ${results.failed.length} failed, ${results.warnings.length} warnings`, 'info');
+
+  process.exit(results.failed.length > 0 ? 1 : 0);
+}
+
+// Run all tests
+runAllTests().catch(error => {
+  console.error('Fatal error running tests:', error);
+  process.exit(1);
+});
