@@ -1,23 +1,28 @@
-#!/bin/bash
+#!/bin/sh
 set -euo pipefail
 
-# List of required packages
-PREREQS=("nodejs" "npm" "git" "openssh" "curl" "python")
+# Define the list of prerequisite packages
+PREREQS=('nodejs' 'npm' 'git' 'openssh' 'curl' 'python')
 
-echo "Checking for prerequisites..."
+echo "Checking for prerequisite packages..."
 
 for pkg in "${PREREQS[@]}"; do
   if command -v "$pkg" >/dev/null 2>&1; then
-    echo "✅ $pkg is already installed."
+    echo "✅ '$pkg' is already installed."
   else
-    echo "🔄 $pkg not found. Attempting to install..."
+    echo "🔄 '$pkg' not found. Attempting to install..."
     if pkg install -y "$pkg"; then
-      echo "✅ Successfully installed $pkg."
+      if command -v "$pkg" >/dev/null 2>&1; then
+        echo "✅ Successfully installed '$pkg'."
+      else
+        echo "❌ ERROR: Installation of '$pkg' reported success, but the command is still not found." >&2
+        exit 1
+      fi
     else
-      echo "❌ Failed to install $pkg. Please install it manually and re-run the script."
+      echo "❌ ERROR: Failed to install '$pkg'." >&2
       exit 1
     fi
   fi
 done
 
-echo "All prerequisites are satisfied."
+echo "All prerequisite checks passed."
