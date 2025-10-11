@@ -39,8 +39,11 @@ cd termux-dev-essentials/termux-dev-tools
 # Install npm dependencies
 npm install
 
-# Run the installer
+# Option 1: Run the full one-shot installer
 bash scripts/install.sh
+
+# Option 2: Interactive component selection (Coming in Phase 2)
+# bash scripts/menu-install.sh
 ```
 
 That's it! The installer will guide you through the setup process.
@@ -409,17 +412,21 @@ git commit -m "Your descriptive commit message"
 
 ## 🗺️ Roadmap
 
-### Phase 2 (2-4 weeks)
+### Phase 2 - Epic 002 (2-4 weeks)
+- [ ] **Interactive Component Menu** (Story 2.1) - Select individual components to install
 - [ ] User acceptance testing
-- [ ] CI/CD pipeline (GitHub Actions)
-- [ ] Expand test coverage (9 remaining stories)
-- [ ] Configuration externalization
+- [ ] CI/CD pipeline (GitHub Actions) - Story 2.6
+- [ ] Expand test coverage to 11/11 stories - Story 2.4
+- [ ] Configuration file support (install.json) - Story 2.2
+- [ ] Progress estimation with ETA - Story 2.3
 
 ### Phase 3 (1-3 months)
-- [ ] Enhanced error recovery with rollback
-- [ ] Performance optimizations
-- [ ] Additional Git providers (GitLab)
-- [ ] Configuration file support (install.json)
+- [ ] Network retry with exponential backoff - Story 2.7
+- [ ] Automatic rollback mechanism - Story 2.8
+- [ ] Installation resume capability - Story 2.9
+- [ ] Performance optimizations - Story 2.11
+- [ ] Additional Git providers (GitLab) - Story 2.10
+- [ ] Update command for installed tools - Story 2.12
 
 ### Future Considerations
 - [ ] Support for other mobile Linux environments (iSH)

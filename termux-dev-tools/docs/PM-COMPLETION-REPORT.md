@@ -300,6 +300,8 @@ I'm pleased to report that **Epic 001: MVP Core Installer** has been **successfu
 
 ### Phase 2 Roadmap (Post-MVP Vision)
 
+**Epic 002: Phase 2 Enhancements** - See `docs/stories/epic-002-phase2-enhancements.md`
+
 **Immediate Next Steps (2-4 weeks)**
 1. **User Acceptance Testing** (Priority: CRITICAL)
    - Deploy to test users
@@ -307,36 +309,48 @@ I'm pleased to report that **Epic 001: MVP Core Installer** has been **successfu
    - Monitor success rates and failure patterns
    - Estimated effort: 1 week
 
-2. **CI/CD Pipeline** (Priority: HIGH)
+2. **Interactive Component Menu** (Priority: HIGH) - **Story 2.1** 
+   - Allow users to select individual components for installation
+   - Multi-select interface with dependency validation
+   - Support --dry-run, --verbose, --yes flags
+   - Estimated effort: 2-3 days
+   - **NEW**: See `docs/stories/002.001.interactive-menu.md`
+
+3. **CI/CD Pipeline** (Priority: HIGH) - **Story 2.6**
    - Set up GitHub Actions
    - Automate test execution
    - Implement quality gates
    - Estimated effort: 1-2 days
 
-3. **Expand Test Coverage** (Priority: HIGH)
+4. **Expand Test Coverage** (Priority: HIGH) - **Story 2.4**
    - Focus on complex stories (CLI install, shims, GitHub)
    - Mock-based testing approach
    - Integration tests
    - Estimated effort: 3-5 days
 
 **Future Enhancements (1-3 months)**
-4. **Configuration Externalization** (Priority: MEDIUM)
+5. **Configuration Externalization** (Priority: MEDIUM) - **Story 2.2**
    - Allow user-customizable CLI tool list
    - Support additional providers (GitLab)
    - JSON-based configuration
    - Estimated effort: 2-4 hours
 
-5. **Enhanced Error Recovery** (Priority: MEDIUM)
-   - Rollback mechanisms
-   - Retry logic for network failures
-   - Recovery mode for partial installs
-   - Estimated effort: 3-5 days
+6. **Enhanced Error Recovery** (Priority: MEDIUM) - **Stories 2.7, 2.8, 2.9**
+   - Network retry with exponential backoff
+   - Automatic rollback mechanisms
+   - Installation resume capability
+   - Estimated effort: 4-6 days
 
-6. **Performance Optimizations** (Priority: LOW)
+7. **Performance Optimizations** (Priority: LOW) - **Story 2.11**
    - Parallel package installation
    - Caching mechanisms
-   - Progress estimation with ETA
+   - Progress estimation with ETA (Story 2.3)
    - Estimated effort: 2-3 days
+
+8. **Additional Features** - **Stories 2.10, 2.12**
+   - GitLab support
+   - Update command for installed tools
+   - Estimated effort: 3-4 days
 
 ---
 
