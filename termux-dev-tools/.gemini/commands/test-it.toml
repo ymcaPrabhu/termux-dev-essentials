@@ -1,0 +1,12 @@
+# .gemini/commands/test-it.toml
+# Comprehensive testing and fixing workflow for the termux-dev-tools project.
+
+[commands.test-it]
+name = "Test and Fix"
+description = "Runs a comprehensive suite of checks to test, lint, and verify the project."
+steps = [
+  { name = "Install Dependencies", command = "npm install" },
+  { name = "Lint Code with ESLint", command = "npx eslint ." },
+  { name = "Run Tests", command = "npm test" },
+  { name = "Sync Changes (if all checks pass)", command = "npm run sync" }
+]
