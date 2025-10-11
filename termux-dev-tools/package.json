@@ -60,6 +60,7 @@
   "bin": {
     "termux-setup": "./scripts/setup.js",
     "termux-dev-install": "./scripts/install.sh",
+    "termux-dev-menu": "./scripts/menu-install.js",
     "termux-dev-verify": "./scripts/verify-installation.sh",
     "termux-dev-uninstall": "./scripts/uninstall.sh"
   },
