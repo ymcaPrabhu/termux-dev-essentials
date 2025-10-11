@@ -1,7 +1,7 @@
 # Epic 3: CLI Tools Correction & API Key Management
 
 ## Status
-- Planning
+- Approved (Ready for Sprint)
 
 ## Goal
 
@@ -260,6 +260,7 @@ The current `install-cli-suite.js` contains 6 CLI tools, but **4 of them do not 
 | Date | Version | Description | Author |
 |---|---|---|---|
 | 2025-01-11 | 1.0 | Initial Epic 3 planning | Droid (Analysis) |
+| 2025-01-11 | 1.1 | Epic approved for sprint | Bob (SM) |
 
 ## QA Results
 
