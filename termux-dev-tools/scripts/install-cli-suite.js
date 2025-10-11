@@ -1,47 +1,65 @@
 #!/usr/bin/env node
 
 /**
- * BMad Story 1.4: CLI Suite Installation
+ * BMad Story 3.1: CLI Suite Installation (Corrected)
  * 
  * This script installs a suite of CLI development tools, with automatic
  * fallback to proot-distro Ubuntu for tools that fail native installation.
+ * 
+ * CORRECTED: All package names verified against npm registry
+ * See: docs/CLI-CORRECTIONS.md for research details
  */
 
 const { execSync, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Task 1: Define CLI Tool List
+// Corrected CLI Tool List - All packages verified on npm
 const CLI_TOOLS = [
   {
-    name: 'cloud-code',
-    installCmd: 'npm install -g @google-cloud/cloud-code',
-    verifyCmd: 'cloud-code --version',
+    name: 'claude-code',
+    installCmd: 'npm install -g @anthropic-ai/claude-code',
+    verifyCmd: 'claude --version',
+    description: 'Anthropic Claude Code - Agentic coding assistant',
+    requiresApiKey: true,
+    apiKeyVar: 'ANTHROPIC_API_KEY',
   },
   {
     name: 'gemini-cli',
-    installCmd: 'npm install -g @google/generative-ai-cli',
+    installCmd: 'npm install -g @google/gemini-cli',
     verifyCmd: 'gemini --version',
+    description: 'Google Gemini CLI - Terminal AI assistant',
+    requiresApiKey: true,
+    apiKeyVar: 'GOOGLE_API_KEY',
   },
   {
-    name: 'codec-cli',
-    installCmd: 'npm install -g codec-cli',
-    verifyCmd: 'codec --version',
+    name: 'codex',
+    installCmd: 'npm install -g @openai/codex',
+    verifyCmd: 'codex --version',
+    description: 'OpenAI Codex - AI coding agent',
+    requiresApiKey: true,
+    apiKeyVar: 'OPENAI_API_KEY',
   },
   {
-    name: 'open-core-cli',
-    installCmd: 'npm install -g open-core-cli',
-    verifyCmd: 'open-core --version',
+    name: 'opencode',
+    installCmd: 'npm install -g opencode-ai',
+    verifyCmd: 'opencode --version',
+    description: 'OpenCode AI - Open source coding agent',
+    requiresApiKey: true,
+    apiKeyVar: 'OPENAI_API_KEY',
   },
+];
+
+// Special installers for tools not available via npm
+const SPECIAL_INSTALLERS = [
   {
-    name: 'factory-ai',
-    installCmd: 'npm install -g @factory-ai/cli',
-    verifyCmd: 'factory-ai --version',
-  },
-  {
-    name: 'droid-cli',
-    installCmd: 'npm install -g droid-cli',
+    name: 'droid',
+    installCmd: 'curl -fsSL https://static.factory.ai/droid/install.sh | sh',
     verifyCmd: 'droid --version',
+    description: 'Factory Droid - AI development agent',
+    requiresApiKey: true,
+    apiKeyVar: 'FACTORY_API_KEY',
+    installMethod: 'curl',
   },
 ];
 
@@ -49,6 +67,7 @@ const RESULTS_FILE = path.join(__dirname, '../.cli-install-results.json');
 const results = {
   native: [],
   proot: [],
+  curl: [],
   failed: [],
 };
 
@@ -160,17 +179,50 @@ function installInProot(tool) {
 }
 
 /**
+ * Install tool via curl script (Story 3.1 - Task 2)
+ * For tools like Factory Droid that are not available on npm
+ */
+function installViaCurl(tool) {
+  console.log(`\n🔄 Installing ${tool.name} via curl...`);
+  
+  try {
+    execSync(tool.installCmd, {
+      stdio: 'inherit',
+      encoding: 'utf8',
+    });
+    
+    if (commandExists(tool.verifyCmd)) {
+      console.log(`✅ Successfully installed '${tool.name}'.`);
+      results.curl.push(tool.name);
+      return true;
+    } else {
+      console.log(`⚠️  Installation completed but command not found.`);
+      return false;
+    }
+  } catch (error) {
+    console.log(`❌ Curl installation failed for '${tool.name}'.`);
+    return false;
+  }
+}
+
+/**
  * Main installation orchestrator
  */
 function installCLITools() {
   console.log('='.repeat(60));
-  console.log('CLI Suite Installation - BMad Story 1.4');
+  console.log('CLI Suite Installation - BMad Story 3.1 (Corrected)');
   console.log('='.repeat(60));
   
+  // Install npm-based CLI tools
   for (const tool of CLI_TOOLS) {
     console.log(`\nProcessing: ${tool.name}`);
     
-    // Task 2 & 6: Check if already installed natively
+    // Display API key requirement
+    if (tool.requiresApiKey) {
+      console.log(`⚠️  This tool requires ${tool.apiKeyVar} environment variable`);
+    }
+    
+    // Check if already installed natively
     if (commandExists(tool.verifyCmd)) {
       console.log(`✅ '${tool.name}' is already installed natively.`);
       results.native.push(tool.name);
@@ -186,13 +238,36 @@ function installCLITools() {
     
     // Attempt native installation
     if (!installNative(tool)) {
-      // Task 3: Trigger fallback
+      // Trigger fallback to proot
       console.log(`🔀 Falling back to proot installation for '${tool.name}'...`);
       
       if (!installInProot(tool)) {
         console.log(`❌ All installation methods failed for '${tool.name}'.`);
         results.failed.push(tool.name);
       }
+    }
+  }
+  
+  // Install special tools (curl-based installers)
+  for (const tool of SPECIAL_INSTALLERS) {
+    console.log(`\nProcessing: ${tool.name} (${tool.installMethod})`);
+    
+    // Display API key requirement
+    if (tool.requiresApiKey) {
+      console.log(`⚠️  This tool requires ${tool.apiKeyVar} environment variable`);
+    }
+    
+    // Check if already installed
+    if (commandExists(tool.verifyCmd)) {
+      console.log(`✅ '${tool.name}' is already installed.`);
+      results.curl.push(tool.name);
+      continue;
+    }
+    
+    // Install via curl
+    if (!installViaCurl(tool)) {
+      console.log(`❌ Installation failed for '${tool.name}'.`);
+      results.failed.push(tool.name);
     }
   }
   
@@ -211,6 +286,10 @@ function installCLITools() {
   if (results.proot.length > 0) {
     console.log(`  - ${results.proot.join(', ')}`);
   }
+  console.log(`Curl installations: ${results.curl.length}`);
+  if (results.curl.length > 0) {
+    console.log(`  - ${results.curl.join(', ')}`);
+  }
   console.log(`Failed installations: ${results.failed.length}`);
   if (results.failed.length > 0) {
     console.log(`  - ${results.failed.join(', ')}`);
@@ -228,4 +307,4 @@ if (require.main === module) {
   installCLITools();
 }
 
-module.exports = { installCLITools, CLI_TOOLS };
+module.exports = { installCLITools, CLI_TOOLS, SPECIAL_INSTALLERS };

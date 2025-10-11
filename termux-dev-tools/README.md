@@ -91,14 +91,19 @@ The installer performs **8 comprehensive steps**:
 
 ### 4️⃣ CLI Tools Installation
 Intelligent installation with automatic fallback:
-- `cloud-code` - Google Cloud development
-- `gemini-cli` - Google AI tools
-- `codec-cli` - Code documentation
-- `open-core-cli` - Open source tools
-- `factory-ai` - AI development tools
-- `droid-cli` - Android development
+- `claude-code` (@anthropic-ai/claude-code) - Anthropic Claude Code agentic assistant
+- `gemini-cli` (@google/gemini-cli) - Google Gemini CLI terminal AI assistant
+- `codex` (@openai/codex) - OpenAI Codex AI coding agent
+- `opencode` (opencode-ai) - OpenCode AI open source coding agent
+- `droid` (curl installer) - Factory Droid AI development agent
 
 **Fallback Logic**: If native installation fails, automatically installs in proot-distro Ubuntu.
+
+**API Keys Required**: All AI tools require API keys. Set environment variables:
+- `ANTHROPIC_API_KEY` for Claude Code
+- `GOOGLE_API_KEY` for Gemini CLI
+- `OPENAI_API_KEY` for Codex/OpenCode
+- `FACTORY_API_KEY` for Factory Droid
 
 ### 5️⃣ Command Shim Generation
 - Seamless access to proot-installed tools
