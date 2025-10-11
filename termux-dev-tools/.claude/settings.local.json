@@ -4,7 +4,8 @@
       "Bash(echo $SHELL)",
       "Bash(source ~/.bashrc)",
       "Bash(cld --version)",
-      "Read(//data/data/com.termux/files/home/**)"
+      "Read(//data/data/com.termux/files/home/**)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
