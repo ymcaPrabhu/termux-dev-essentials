@@ -1,30 +1,53 @@
 # Termux Development Essentials
 
-A comprehensive collection of npm packages and tools for setting up a fresh Termux installation with Claude and GitHub integration.
+A comprehensive one-shot installer for setting up a complete development environment in Termux on Android. Includes SMS/messaging capabilities, error tracking, GitHub integration, and automated CLI tool installation with intelligent proot-distro fallback.
 
-## 🚀 Quick Start
+## 🚀 Quick Start - One-Shot Installation
 
-### Fresh Termux Installation
+### Method 1: Run the Full Installer (Recommended)
 
-1. **Install Node.js and Git in Termux:**
-   ```bash
-   pkg update && pkg upgrade
-   pkg install nodejs git python
-   ```
+```bash
+# 1. Install prerequisites
+pkg update && pkg upgrade
+pkg install nodejs git python
 
-2. **Clone and setup this project:**
-   ```bash
-   git clone <your-repo-url>
-   cd termux-dev-essentials
-   npm install
-   npm run setup
-   ```
+# 2. Clone this repository
+git clone <your-repo-url>
+cd termux-dev-tools
 
-3. **Configure Git (if not already done):**
-   ```bash
-   git config --global user.name "Your Name"
-   git config --global user.email "your.email@example.com"
-   ```
+# 3. Install npm dependencies
+npm install
+
+# 4. Run the one-shot installer
+bash scripts/install.sh
+
+# Or with options:
+bash scripts/install.sh --verbose           # Detailed logging
+bash scripts/install.sh --dry-run           # Preview without changes
+bash scripts/install.sh --yes --dry-run     # Auto-approve preview
+```
+
+### Method 2: Use NPM Global Install (After setup)
+
+```bash
+npm install -g .
+termux-dev-install              # Run full installation
+termux-dev-verify               # Verify installation
+termux-dev-uninstall            # Uninstall everything
+```
+
+## 📋 What Gets Installed
+
+The one-shot installer performs these steps automatically:
+
+1. **Termux Preparation** - Environment detection, storage permissions, PATH configuration
+2. **Prerequisite Installation** - nodejs, npm, git, openssh, curl, python
+3. **Proot-Distro Setup** - Ubuntu container for incompatible tools (optional)
+4. **CLI Tools** - Development CLIs with automatic native/proot fallback
+5. **GitHub Setup** - SSH key generation, authentication, git configuration
+6. **Repository Cloning** - Your project repository in ~/projects
+7. **Shell Customization** - Helpful aliases and informative PS1 prompt
+8. **Verification** - Comprehensive health checks
 
 ## 📦 Included Packages
 
@@ -62,18 +85,51 @@ A comprehensive collection of npm packages and tools for setting up a fresh Term
 
 ## 🛠️ Available Scripts
 
+### Installer Scripts
+
 ```bash
-# Setup development environment
-npm run setup
+# Full one-shot installation
+bash scripts/install.sh
+bash scripts/install.sh --dry-run --verbose
+
+# Individual components
+bash scripts/prepare-termux.sh       # Step 1: Termux prep
+bash scripts/install-prereqs.sh      # Step 2: Prerequisites
+bash scripts/setup-proot.sh          # Step 3: Proot setup
+node scripts/install-cli-suite.js    # Step 4: CLI tools
+node scripts/setup-github.js         # Step 5: GitHub auth
+node scripts/clone-repo.js           # Step 6: Clone repo
+bash scripts/apply-shell-config.sh   # Step 7: Shell config
+bash scripts/verify-installation.sh  # Step 8: Verification
+
+# Utility scripts
+bash scripts/uninstall.sh            # Complete uninstallation
+node scripts/generate-shims.js       # Manage proot shims
+```
+
+### NPM Scripts
+
+```bash
+# Start Sentry-enabled Express server
+npm start
+
+# Development mode with auto-reload
+npm run dev
+
+# Run all tests
+node tests/run-all-tests.js
 
 # Quick sync to GitHub
 npm run sync
 
-# Update all packages and fix vulnerabilities
+# Update all packages
 npm run update-all
 
-# Run interactive GitHub setup
-node scripts/github-sync.js
+# GitHub Codespaces connection
+npm run codespace
+
+# Clean cache
+npm run clean
 ```
 
 ## 🔧 CLI Tools

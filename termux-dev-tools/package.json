@@ -58,7 +58,10 @@
     "typescript": "^5.3.3"
   },
   "bin": {
-    "termux-setup": "./scripts/setup.js"
+    "termux-setup": "./scripts/setup.js",
+    "termux-dev-install": "./scripts/install.sh",
+    "termux-dev-verify": "./scripts/verify-installation.sh",
+    "termux-dev-uninstall": "./scripts/uninstall.sh"
   },
   "repository": {
     "type": "git",
